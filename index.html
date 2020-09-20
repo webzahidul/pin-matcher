@@ -12,70 +12,147 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="pin-generator half-width">
-                    <input class="form-control" type="text">
-                    <button class="generate-btn">Generate Pin</button>
+                    <input id="generate-pin" class="form-control text-center font-weight-bold" type="text" value="0">
+                    <button id="generate-btn" class="generate-btn">Generate Pin</button>
                 </div>
             </div>
             <div class="col-md-6">
-
-                <form action=""name="form"> 
                 <div class="input-section half-width">
-                    <input id="inp" class="form-control text-right" type="text" name="display" placeholder="0">
-
+                    <input class="form-control text-center font-weight-bold" id="user-pin-number" type="text" placeholder="0">
                     <div class="numbers">
-
-                     
                         <div class="calc-body">
                             <div class="calc-button-row">
-
-                                <input type="button" value="7" class="button" onclick="getInputNumber(this.value)">
-                                <input type="button" value="8" class="button" onclick="getInputNumber(this.value)">
-                                <input type="button" value="9" class="button" onclick="getInputNumber(this.value)">
-                
-                        </div>
-
-                        <div class="calc-button-row">
-
-                                <input type="button" value="4" class="button" onclick="getInputNumber(this.value)">
-                                <input type="button" value="5" class="button" onclick="getInputNumber(this.value)">
-                                <input type="button" value="6" class="button" onclick="getInputNumber(this.value)">
-                        </div>
-                        <div class="calc-button-row">
-
-                                <input type="button" value="1" class="button" onclick="getInputNumber(this.value)">
-                                <input type="button" value="2" class="button" onclick="getInputNumber(this.value)">
-                                <input type="button" value="3" class="button" onclick="getInputNumber(this.value)">
-                        
+                              <div class="button">7</div>
+                              <div class="button">8</div>
+                              <div class="button">9</div>
                             </div>
-
-                        <div class="calc-button-row">
-                            <div class="button"><</div>
-                            <div class="button">0</div>
-                            <div class="button">C</div>
-                        </div>
-                      </form>
-
+                            <div class="calc-button-row">
+                              <div class="button">4</div>
+                              <div class="button">5</div>
+                              <div class="button">6</div>
+                            </div>
+                            <div class="calc-button-row">
+                              <div class="button">1</div>
+                              <div class="button">2</div>
+                              <div class="button">3</div>
+                            </div>
+                            <div class="calc-button-row">
+                                <div class="button" data-type="backSpace"><</div>
+                                <div class="button">0</div>
+                                <div class="button" data-type="clear">C</div>
+                            </div>
+            
                             <div>
-                                <button type="submit" class="submit-btn">Submit</button>
-                                <p class="action-left">3 try left</p>
+                                <button id="submit-btn" type="submit" class="submit-btn font-weight-bold">Submit</button>
+                                <p class="action-left"> <span id="tryNumber">3</span>try left</p>
                             </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="notify-off" class="notify-section">
-            <p class="notify">❌ Pin Didn't Match, Please try again</p>
-            <p class="notify">✅ Pin Matched... Secret door is opening for you</p>
+        <div class="notify-section">
+            <p id="noMatch" class="successNotify">❌ Pin Didn't Match, Please try again</p>
+            <p id="yesMatch" class="wrongNotify">✅ Pin Matched... Secret door is opening for you</p>
         </div>
     </div>
 
-    <script>
 
-       document.getElementById("notify-off").style.display = "none";
-   function getInputNumber(x) {
-form.display.value = form.display.value + x;       
-   }
-    </script>
+
+<!-- Javascript Section Part -->
+
+   <script>
+
+       // Initial Variable Part
+const wrongNotify = document.getElementById("noMatch");
+const successNotify = document.getElementById('yesMatch');
+
+const numberKey = document.querySelector(".numbers");
+let userInput = document.getElementById("user-pin-number");
+
+const submitBtn = document.getElementById("submit-btn");
+
+let tryLeft = document.getElementById("tryNumber");
+let totalTry = 3;
+
+// Hide Section
+function hideAllMessage() {
+  wrongNotify.style.display = "none";
+  successNotify.style.display = "none";
+}
+hideAllMessage();
+
+// Random Digit Generate Part
+const generateBtn = document.getElementById("generate-btn");
+const generatePin = document.getElementById("generate-pin");
+
+generateBtn.addEventListener("click", function () {
+  generatePin.value = randomRange(1000, 9999);
+  resetStage();
+});
+
+function randomRange(minNum, maxNum) {
+  return Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+}
+
+// Keypad User Input Provide Part.
+numberKey.addEventListener("click", function (e) {
+  hideAllMessage();
+  let targetKey = e.target;
+  keyPadInput(targetKey);
+});
+
+function keyPadInput(targetKey) {
+  if (targetKey.classList.contains("button")) {
+    // When Click on 'C' btn
+    if (targetKey.dataset.type == "clear") {
+      userInput.value = '';
+    }
+    // When Click on '<' btn
+    else if (targetKey.dataset.type == "backSpace") {
+      let inputString = userInput.value;
+      userInput.value = inputString.slice(0, inputString.length - 1);
+    }
+    // When Click on the Rest Number btn
+    else {
+      const newDigit = targetKey.innerHTML;
+      userInput.value += newDigit;
+    }
+  }
+
+  if (
+    targetKey.classList.contains("submit-btn") &&
+    generatePin.value.length > 0
+  ) {
+    varifyUserInput();
+  }
+}
+
+function varifyUserInput() {
+  if (userInput.value == generatePin.value) {
+    successNotify.style.display = "block";
+  }
+  // When not Matching the User Input
+  else {
+    wrongNotify.style.display = "block";
+    totalTry--;
+    tryLeft.innerText = totalTry;
+
+    if (totalTry == 0) {
+      submitBtn.disabled = true;
+      submitBtn.style.backgroundColor = "#3d4153";
+    }
+  }
+}
+
+// Initial Stage Property Reset
+function resetStage() {
+  totalTry = 3;
+  tryLeft.innerText = totalTry;
+  userInput.value = '';
+  hideAllMessage();
+}
+
+   </script>
 
 </body>
 </html>

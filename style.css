@@ -45,7 +45,7 @@ input[type='text']{
 input[type='text']:focus {
     background-color: #3D4153;
     color: #fff;
-    font-size: 20px;
+    font-size: 30px;
 }
 .numbers {
     margin: 30px 0;
@@ -69,7 +69,7 @@ color: #fff;
 padding: 20px 0;
 margin: 5px;
 display: inline-block;
-font-size: 25px;
+font-size: 30px;
 text-align: center;
 vertical-align: middle;
 margin-right: -4px;
@@ -104,7 +104,9 @@ color: #E0B612;
     color: #FF3C5F;
     margin-top: 10px;
 }
-#inp{
-    font-size: 40px;
-    font-weight: bold;
+#generate-pin{
+font-size: 30px;
+}
+#user-pin-number{
+    font-size: 30px;
 }
